@@ -15,7 +15,6 @@ def read(filename):
 setup(
     name="spyndex",
     version="0.6.0",
-    url="https://github.com/awesome-spectral-indices/spyndex",
     license="MIT",
     author="David Montero Loaiza",
     author_email="dml.mont@gmail.com",
