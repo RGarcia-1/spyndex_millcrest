@@ -1,11 +1,9 @@
-import re
 from typing import Any, List, Optional, Union
 
 import dask
 import dask.array as da
 import dask.dataframe as dd
 import ee
-import eemont
 import numpy as np
 import pandas as pd
 import xarray as xr
@@ -87,14 +85,12 @@ def computeIndex(
     Two or more Spectral Indices can also be computed:
 
     >>> spyndex.computeIndex(
-    ...     index = ["NDVI","SAVI"],
+    ...     index = ["NDVI","MSAVI"],
     ...     params = {
     ...         "N": 0.643,
     ...         "R": 0.175,
-    ...         "L": 0.5
     ...     }
     ... )
-    [0.5721271393643031, 0.5326251896813354]
 
     Spyndex is versatile! Let's compute Spectral Indices from a :code:`numpy.ndarray`:
 
@@ -103,32 +99,25 @@ def computeIndex(
     >>> G = np.random.normal(0.34,0.07,10000)
     >>> N = np.random.normal(0.67,0.12,10000)
     >>> spyndex.computeIndex(
-    ...     index = ["NDVI","SAVI","GNDVI"],
+    ...     index = ["NDVI","MSAVI","NDWI"],
     ...     params = {
-    ...         "N": N,
     ...         "R": R,
     ...         "G": G,
-    ...         "L": 0.5
+    ...         "N": N,
     ...     }
     ... )
-    array([[0.57190873, 0.63776266, 0.52554653, ..., 0.692647  , 0.72013087,
-            0.57576994],
-           [0.5494994 , 0.60604837, 0.47157809, ..., 0.60647869, 0.65887439,
-            0.52585032],
-           [0.33304486, 0.46408771, 0.28007567, ..., 0.35734698, 0.28536337,
-            0.50212151]])
 
     Now, let's try a :code:`pandas.DataFrame`:
 
     >>> import pandas as pd
-    >>> df = pd.DataFrame({"Red":R,"Green":G,"NIR":N})
+    >>> df = pd.DataFrame({"Red":R, "Green":G, "Blue": B, "NIR":N})
     >>> spyndex.computeIndex(
-    ...     index = ["NDVI","SAVI","GNDVI"],
+    ...     index = ["NDVI","MSAVI","CIVE"],
     ...     params = {
-    ...         "N": df["NIR"],
     ...         "R": df["Red"],
     ...         "G": df["Green"],
-    ...         "L": 0.5
+    ...         "B": df["Blue"],
+    ...         "N": df["NIR"],
     ...     }
     ... )
             NDVI      SAVI     GNDVI
@@ -138,25 +127,20 @@ def computeIndex(
     3     0.498328  0.443842  0.514775
     4     0.625445  0.512757  0.227829
     ...        ...       ...       ...
-    9995  0.706123  0.604131  0.233519
-    9996  0.731205  0.630090  0.389462
-    9997  0.692647  0.606479  0.357347
-    9998  0.720131  0.658874  0.285363
-    9999  0.575770  0.525850  0.502122
 
     What about a :code:`xarray.DataArray`?
 
     >>> import xarray as xr
-    >>> da = xr.DataArray(np.array([G,R,N]).reshape(3,100,100),
+    >>> da = xr.DataArray(np.array([R,G,B,N]).reshape(4,100,100),
     ...     dims = ("band","x","y"),
-    ...     coords = {"band": ["Green","Red","NIR"]})
+    ...     coords = {"band": ["Red", "Green", "Blue", "NIR"]})
     >>> spyndex.computeIndex(
-    ...     index = ["NDVI","SAVI","GNDVI"],
+    ...     index = ["NDVI","MSAVI","CIVE"],
     ...     params = {
-    ...         "N": da.sel(band = "NIR"),
     ...         "R": da.sel(band = "Red"),
     ...         "G": da.sel(band = "Green"),
-    ...         "L": 0.5
+    ...         "B": da.sel(band = "Blue"),
+    ...         "N": da.sel(band = "NIR"),
     ...     }
     ... )
     <xarray.DataArray (index: 3, x: 100, y: 100)>
@@ -170,17 +154,18 @@ def computeIndex(
     >>> array_shape = (10000,10000)
     >>> chunk_size = (1000,1000)
     >>> dask_array = da.array([
-    ...     da.random.normal(0.6,0.10,array_shape,chunks = chunk_size),
-    ...     da.random.normal(0.1,0.05,array_shape,chunks = chunk_size),
-    ...     da.random.normal(0.3,0.02,array_shape,chunks = chunk_size)
+    ...     da.random.normal(0.6, 0.10, array_shape, chunks=chunk_size),
+    ...     da.random.normal(0.1, 0.05, array_shape, chunks=chunk_size),
+    ...     da.random.normal(0.3, 0.02, array_shape, chunks=chunk_size)
+    ...     da.random.normal(0.4, 0.01, array_shape, chunks=chunk_size)
     ... ])
     >>> spyndex.computeIndex(
-    ...     index = ["NDVI","SAVI","GNDVI"],
+    ...     index = ["NDVI","MSAVI","CIVE"],
     ...     params = {
-    ...         "N": dask_array[0],
     ...         "R": dask_array[1],
     ...         "G": dask_array[2],
-    ...         "L": 0.5
+    ...         "B": dask_array[3],
+    ...         "N": dask_array[4],
     ...     }
     ... ).compute()
 
@@ -188,18 +173,19 @@ def computeIndex(
 
     >>> import dask.dataframe as dd
     >>> df = pd.DataFrame({
-    ...     "NIR": np.random.normal(0.6,0.10,1000),
     ...     "RED": np.random.normal(0.1,0.05,1000),
     ...     "GREEN": np.random.normal(0.3,0.02,1000),
+    ...     "BLUE": np.random.normal(0.6,0.10,1000),
+    ...     "NIR": np.random.normal(0.6,0.10,1000),
     ... })
     >>> df = dd.from_pandas(df,npartitions = 10)
     >>> spyndex.computeIndex(
-    ...     index = ["NDVI","SAVI","GNDVI"],
+    ...     index = ["NDVI","MSAVI","CIVE"],
     ...     params = {
-    ...         "N": df["NIR"],
     ...         "R": df["RED"],
     ...         "G": df["GREEN"],
-    ...         "L": 0.5
+    ...         "B": df["BLUE"],
+    ...         "N": df["NIR"],
     ...     }
     ... ).compute()
     """
