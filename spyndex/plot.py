@@ -6,7 +6,7 @@ import seaborn as sns
 
 import spyndex
 
-from .utils import _check_params, _get_indices
+from .utils import check_params, get_indices
 
 
 def heatmap(
@@ -74,8 +74,8 @@ def heatmap(
     else:
         params = {x: df[x], y: df[y]}
 
-    indices = _get_indices(online)
-    _check_params(index, params, indices)
+    indices = get_indices(online)
+    check_params(index, params, indices)
 
     df[index] = spyndex.computeIndex(index=index, params=params)
 
