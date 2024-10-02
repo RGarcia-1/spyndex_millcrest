@@ -3,7 +3,7 @@ from typing import Any
 import pandas as pd
 import xarray as xr
 
-from .utils import _load_JSON
+from .utils import load_json
 
 
 def open(dataset: str) -> Any:
@@ -58,7 +58,7 @@ def open(dataset: str) -> Any:
             f"{dataset} is not a valid dataset. Please use one of ['sentinel','spectral']"
         )
 
-    ds = _load_JSON(datasets[dataset])
+    ds = load_json(datasets[dataset])
 
     if dataset == "sentinel":
         ds = xr.DataArray(
