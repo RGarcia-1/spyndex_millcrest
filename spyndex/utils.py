@@ -4,8 +4,6 @@ import os
 import pkg_resources
 import requests
 
-import spyndex
-
 
 def _load_JSON(file="spectral-indices-dict.json"):
     """Loads the specified JSON file from the data folder.
