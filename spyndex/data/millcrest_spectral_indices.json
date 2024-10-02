@@ -1,0 +1,89 @@
+{
+    "SpectralIndices": {
+        "CIVE": {
+            "application_domain": "vegetation",
+            "bands": [
+                "R",
+                "G",
+                "B"
+            ],
+            "contributor": "https://github.com/RGarcia-1",
+            "date_of_addition": "2024-10-02",
+            "formula": "(0.411 * R - 0.811 * G + 0.385 * B) / (R + G + B)",
+            "long_name": "color index of vegetation extraction",
+            "platforms": [
+                "Sentinel-2",
+                "Landsat-OLI",
+                "Landsat-TM",
+                "Landsat-ETM+",
+                "MODIS",
+                "Planet-Fusion"
+            ],
+            "reference": "https://doi.org/10.1109/AIM.2003.1225492",
+            "short_name": "CIVE"
+        },
+        "MSAVI": {
+            "application_domain": "vegetation",
+            "bands": [
+                "N",
+                "R"
+            ],
+            "contributor": "https://github.com/davemlz",
+            "date_of_addition": "2021-05-13",
+            "formula": "0.5 * (2.0 * N + 1 - (((2 * N + 1) ** 2) - 8 * (N - R)) ** 0.5)",
+            "long_name": "Modified Soil-Adjusted Vegetation Index",
+            "platforms": [
+                "Sentinel-2",
+                "Landsat-OLI",
+                "Landsat-TM",
+                "Landsat-ETM+",
+                "MODIS",
+                "Planet-Fusion"
+            ],
+            "reference": "https://doi.org/10.1016/0034-4257(94)90134-1",
+            "short_name": "MSAVI"
+        },
+        "NDVI": {
+            "application_domain": "vegetation",
+            "bands": [
+                "N",
+                "R"
+            ],  
+            "contributor": "https://github.com/davemlz",
+            "date_of_addition": "2021-04-07",
+            "formula": "(N - R)/(N + R)",
+            "long_name": "Normalized Difference Vegetation Index",
+            "platforms": [
+                "Sentinel-2",
+                "Landsat-OLI",
+                "Landsat-TM",
+                "Landsat-ETM+",
+                "MODIS",
+                "Planet-Fusion"
+            ],
+            "reference": "https://ntrs.nasa.gov/citations/19740022614",
+            "short_name": "NDVI"
+        },
+        "NDWI": {
+            "application_domain": "water",
+            "bands": [
+                "G",
+                "N"
+            ],
+            "contributor": "https://github.com/davemlz",
+            "date_of_addition": "2021-04-07",
+            "formula": "(G - N) / (G + N)",
+            "long_name": "Normalized Difference Water Index",
+            "platforms": [
+                "Sentinel-2",
+                "Landsat-OLI",
+                "Landsat-TM",
+                "Landsat-ETM+",
+                "MODIS",
+                "Planet-Fusion"
+            ],
+            "reference": "https://doi.org/10.1080/01431169608948714",
+            "short_name": "NDWI"
+        }
+    }
+}
