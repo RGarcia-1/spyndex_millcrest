@@ -1,4 +1,4 @@
-from typing import Optional, Union
+from typing import Optional
 
 import numpy as np
 import pandas as pd
@@ -9,7 +9,14 @@ import spyndex
 from .utils import _check_params, _get_indices
 
 
-def heatmap(index: str, x: str, y: str, params: Optional[dict] = None, online: bool = False, **kwargs):
+def heatmap(
+    index: str,
+    x: str,
+    y: str,
+    params: Optional[dict] = None,
+    online: bool = False,
+    **kwargs
+):
     """Plot all posible index values as a color-encoded matrix.
 
     Parameters
