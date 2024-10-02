@@ -1,32 +1,35 @@
 import json
-import os
 
 import pkg_resources
 import requests
+from pathlib import Path
 
 
-def _load_JSON(file="spectral-indices-dict.json"):
-    """Loads the specified JSON file from the data folder.
+def load_json(js_file: str = "millcrest_spectral_indices.json") -> dict:
+    """
+    Loads the specified JSON file from the data folder.
 
     Parameters
     ----------
-    file : str
-        File name.
+    js_file : str
+        Json filename in the spyndex/data/ directory.
+        Default is "millcrest_spectral_indices.json"
 
     Returns
     -------
-    object
-        JSON file.
+    data : dict
+        Contents of the json file as a dict.
     """
-    spyndexDir = os.path.dirname(
-        pkg_resources.resource_filename("spyndex", "spyndex.py")
-    )
-    dataPath = os.path.join(spyndexDir, "data/" + file)
-    f = open(dataPath)
-    return json.load(f)
+    spyndex_path = Path(pkg_resources.resource_filename("spyndex", "spyndex.py"))
+    local_fn = spyndex_path.parent / f"data/{js_file}"
+
+    with local_fn.open("r") as fid:
+        data = json.load(fid)
+
+    return data
 
 
-def _get_indices(online=False):
+def get_indices(online=False):
     """Retrieves the JSON of indices.
 
     Parameters
@@ -45,12 +48,12 @@ def _get_indices(online=False):
             "https://raw.githubusercontent.com/awesome-spectral-indices/awesome-spectral-indices/main/output/spectral-indices-dict.json"
         ).json()
     else:
-        indices = _load_JSON()
+        indices = load_json()
 
     return indices["SpectralIndices"]
 
 
-def _check_params(index: str, params: dict, indices: dict):
+def check_params(index: str, params: dict, indices: dict):
     """Checks if the parameters dictionary contains all required bands for the index
     computation.
 
