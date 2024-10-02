@@ -1,7 +1,7 @@
 from box import Box
 
 from .spyndex import computeIndex
-from .utils import _get_indices, _load_JSON
+from .utils import get_indices, load_json
 
 
 class SpectralIndices(Box):
@@ -160,7 +160,7 @@ class SpectralIndex(object):
 def _create_indices():
     """Creates the set of Spectral Indices locally available."""
 
-    indices = _get_indices(False)
+    indices = get_indices(False)
     indices_class = {}
     for key, value in indices.items():
         indices_class[key] = SpectralIndex(value)
@@ -368,7 +368,7 @@ class Band(object):
 def _create_bands():
     """Creates the set of Bands locally available."""
 
-    bands = _load_JSON("bands.json")
+    bands = load_json("bands.json")
     bands_class = {}
     for key, value in bands.items():
         bands_class[key] = Band(value)
@@ -476,7 +476,7 @@ class Constant(object):
 def _create_constants():
     """Creates the set of Constants locally available."""
 
-    constants = _load_JSON("constants.json")
+    constants = load_json("constants.json")
     constants_class = {}
     for key, value in constants.items():
         constants_class[key] = Constant(value)
